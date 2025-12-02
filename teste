@@ -1,0 +1,41 @@
+teste 
+
+componentDiagram
+    package "Frontend (Cliente)" {
+        [Interface de Usuário (Views)] as UI
+        [Controlador de Livros (Client)] as BookCtrlClient
+        [Gerenciador de Sessão] as AuthClient
+    }
+
+    package "Backend (Servidor)" {
+        [API Gateway / Rotas] as API
+        [Service de Livros (Regras)] as BookService
+        [Service de Autenticação] as AuthService
+        [Repositório / DAO] as Repo
+    }
+
+    database "Banco de Dados" {
+        [Tabela Livros]
+        [Tabela Usuários]
+    }
+
+    %% Relações
+    UI --> BookCtrlClient : Solicita criar/ler
+    UI --> AuthClient : Solicita login/logout
+    
+    BookCtrlClient --(0 API : JSON / HTTP
+    AuthClient --(0 API : JSON / HTTP
+
+    API --> AuthService : Valida credenciais
+    API --> BookService : Encaminha dados do livro
+
+    BookService --> Repo : Envia dados validados
+    AuthService --> Repo : Busca usuário
+
+    Repo --> [Tabela Livros] : SQL (CRUD)
+    Repo --> [Tabela Usuários] : SQL (Select)
+
+    note right of BookService
+        RN01: Valida se campos
+        não estão todos vazios
+    end note
